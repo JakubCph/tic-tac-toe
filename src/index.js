@@ -12,31 +12,40 @@ import './index.css';
   }
   
   class Board extends React.Component {
+    constructor(props){
+      super(props);
+      this.state = {
+        size:3
+      }
+    }
+
     renderSquare(i) {
       return (
       <Square 
-              value={this.props.squares[i]}
-              onClick= {() => this.props.onClick(i)}
-      />);
+        value={this.props.squares[i]}
+        onClick= {() => this.props.onClick(i)}
+      />
+      );
     }
   
     render() {
+      const squares = [];
+      for(let col = 0; col < this.state.size; col++){
+        for(let row = 0; row < this.state.size; row++){
+          squares.push(this.renderSquare(this.state.size * col + row));
+        }
+      }
+
       return (
         <div>
           <div className="board-row">
-            {this.renderSquare(0)}
-            {this.renderSquare(1)}
-            {this.renderSquare(2)}
+            {squares.slice(0, this.state.size)}
           </div>
           <div className="board-row">
-            {this.renderSquare(3)}
-            {this.renderSquare(4)}
-            {this.renderSquare(5)}
+            {squares.slice(this.state.size, 2 * this.state.size)}
           </div>
           <div className="board-row">
-            {this.renderSquare(6)}
-            {this.renderSquare(7)}
-            {this.renderSquare(8)}
+            {squares.slice(2 * this.state.size, 3 * this.state.size)}
           </div>
         </div>
       );
@@ -104,7 +113,8 @@ import './index.css';
             className={this.state.stepNumber === stepNumber ? 'selected' : ''}
             onClick={
               ()=>this.jumpTo(stepNumber)
-            }>
+            }
+          >
             {description}
           </button>
         </li>      
