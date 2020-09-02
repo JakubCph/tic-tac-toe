@@ -65,6 +65,7 @@ import './index.css';
         }],
         xIsNext:true,
         stepNumber:0,
+        firstStepOldest:true
       }
     }
 
@@ -95,6 +96,12 @@ import './index.css';
           stepNumber: history.length
       });
 
+    }
+
+    toggleOrder(){
+      this.setState({
+        firstStepOldest: !this.state.firstStepOldest
+      });
     }
 
     render() {
@@ -137,8 +144,9 @@ import './index.css';
             />
           </div>
           <div className="game-info">
+            <button onClick={() => this.toggleOrder()}>Toggle moves order</button>
             <div>{status}</div>
-            <ol>{moves}</ol>
+            <ol>{this.state.firstStepOldest ? moves : moves.reverse()}</ol>
           </div>
         </div>
       );
