@@ -73,6 +73,8 @@ import './index.css';
       }
     }
 
+    static maxStep = 9;
+
     jumpTo(stepNumber){
       this.setState({
         stepNumber,
@@ -134,7 +136,10 @@ import './index.css';
       });
 
       let status;
-      if(winner){
+      if(this.state.stepNumber >= Game.maxStep && winner === null){
+        status = "It's a draw";
+      }
+      else if(winner){
         status = `Winner: ${winner}`;
       } else {
         status = `Next player: ${this.state.xIsNext ? 'X' : 'O'}`;
@@ -151,7 +156,10 @@ import './index.css';
           </div>
           <div className="game-info">
             <button onClick={() => this.toggleOrder()}>Toggle moves order</button>
-            <div>{status}</div>
+            <div>
+            <label>Status: </label>
+            {status}
+            </div>
             <ol>{this.state.firstStepOldest ? moves : moves.reverse()}</ol>
           </div>
         </div>
