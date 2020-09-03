@@ -4,48 +4,52 @@ import './index.css';
 
   function Square(props){
     return (
-      <button className="square" 
+      <button className={props.isWinning ? 'square winning' : 'square'} 
               onClick={props.onClick}>
         {props.value}
       </button>
     );
   }
-  
+
   class Board extends React.Component {
-    constructor(props){
-      super(props);
-      this.state = {
-        size:3
+    static size = 3;
+
+    isWinningSquare(winningIndexes, index){
+      if(winningIndexes){
+        return winningIndexes.includes(index);
       }
+      return false;
     }
 
     renderSquare(i) {
       return (
-      <Square 
-        value={this.props.squares[i]}
-        onClick= {() => this.props.onClick(i)}
-      />
+        <Square 
+          key={i}
+          value={this.props.squares[i]}
+          isWinning={this.isWinningSquare(this.props.winningSquares, i)}
+          onClick= {() => this.props.onClick(i)}
+        />
       );
     }
   
     render() {
       const squares = [];
-      for(let col = 0; col < this.state.size; col++){
-        for(let row = 0; row < this.state.size; row++){
-          squares.push(this.renderSquare(this.state.size * col + row));
+      for(let col = 0; col < Board.size; col++){
+        for(let row = 0; row < Board.size; row++){
+          squares.push(this.renderSquare(Board.size * col + row));
         }
       }
 
       return (
         <div>
           <div className="board-row">
-            {squares.slice(0, this.state.size)}
+            {squares.slice(0, Board.size)}
           </div>
           <div className="board-row">
-            {squares.slice(this.state.size, 2 * this.state.size)}
+            {squares.slice(Board.size, 2 * Board.size)}
           </div>
           <div className="board-row">
-            {squares.slice(2 * this.state.size, 3 * this.state.size)}
+            {squares.slice(2 * Board.size, 3 * Board.size)}
           </div>
         </div>
       );
@@ -107,6 +111,7 @@ import './index.css';
     render() {
       const history = this.state.history;
       const current = history[this.state.stepNumber];
+      const winningSquares = calculateWinningSquares(current.squares);
       const winner = calculateWinner(current.squares);
 
       const moves = history.map((step, stepNumber) =>
@@ -140,6 +145,7 @@ import './index.css';
           <div className="game-board">
             <Board 
               squares={current.squares}
+              winningSquares={winningSquares}
               onClick={(i) => this.handleClick(i)}
             />
           </div>
@@ -162,6 +168,11 @@ import './index.css';
   
   // helper method 
   function calculateWinner(squares) {
+    const winningSquares = calculateWinningSquares(squares);
+    return winningSquares ? squares[winningSquares[0]] : null;
+  }
+
+  function calculateWinningSquares(squares){
     const lines = [
       [0, 1, 2],
       [3, 4, 5],
@@ -175,7 +186,7 @@ import './index.css';
     for (let i = 0; i < lines.length; i++) {
       const [a, b, c] = lines[i];
       if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-        return squares[a];
+        return lines[i].slice(0);
       }
     }
     return null;
